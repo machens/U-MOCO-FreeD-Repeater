@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>U_MOCO_FreeD_Repeater</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyVersion>1.0.0.0508</AssemblyVersion>
+    <FileVersion>1.0.0.0508</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="U-MOCOhw.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="MaterialDesignColors" Version="3.0.0-ci480" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.0.0-ci480" />
+    <PackageReference Include="MaterialDesignThemes.MahApps" Version="3.0.0-ci480" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="U-MOCOhw.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>

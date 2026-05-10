@@ -1,0 +1,431 @@
+﻿<Window x:Class="U_MOCO_FreeD_Repeater.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:U_MOCO_FreeD_Repeater"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        Title="U-MOCO FreeD Repeater"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded"
+        Height="950"
+        Width="1120">
+    <Window.Resources>
+        <Style x:Key="RightCell"
+               TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment"
+                    Value="Right" />
+        </Style>
+        <Style x:Key="RightHeader"
+               TargetType="DataGridColumnHeader"
+               BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Right" />
+            <Setter Property="Padding"
+                    Value="0,0,4,0" />
+        </Style>
+
+        <Style x:Key="LeftCell"
+               TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment"
+                    Value="Left" />
+            <Setter Property="Padding"
+                    Value="4,0" />
+        </Style>
+        <Style x:Key="CenterCell"
+               TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+        </Style>
+    </Window.Resources>
+    <Grid Background="#FF303030"
+          Margin="0,0,0,0">
+        <Button x:Name="btnOK"
+                Content="{materialDesign:PackIcon check, Size=15}"
+                HorizontalAlignment="Left"
+                Foreground="Black"
+                Margin="187,10,0,0"
+                VerticalAlignment="Top"
+                ToolTip="Start"
+                Height="23"
+                Width="50"
+                IsDefault="True"
+                Click="btnOK_Click" />
+        <Label Content="Receive Port:"
+               HorizontalAlignment="Left"
+               Margin="19,10,0,0"
+               VerticalAlignment="Top" />
+        <TextBox x:Name="txtPort"
+                 HorizontalAlignment="Left"
+                 Margin="107,9,0,0"
+                 TextWrapping="Wrap"
+                 Text=""
+                 Foreground="White"
+                 VerticalAlignment="Top"
+                 Width="70" />
+        <Label Content="Frequency:"
+               HorizontalAlignment="Left"
+               Margin="31,49,0,0"
+               VerticalAlignment="Top" />
+        <Label x:Name="lblFrequency"
+               Content="0.00HZ"
+               HorizontalAlignment="Left"
+               HorizontalContentAlignment="Right"
+               Margin="107,49,0,0"
+               VerticalAlignment="Top"
+               Width="70" />
+        <Image Margin="0,10,13,0"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Right"
+               Source="pack://application:,,,/U-MOCOhw.png"
+               Stretch="Uniform"
+               Height="66"
+               Width="292" />
+        <Label Content="Count:"
+               HorizontalAlignment="Left"
+               Margin="182,49,0,0"
+               VerticalAlignment="Top" />
+        <Label x:Name="lblCount"
+               Content="0"
+               HorizontalAlignment="Left"
+               HorizontalContentAlignment="Right"
+               Margin="240,49,0,0"
+               VerticalAlignment="Top"
+               Width="75" />
+
+
+        <!-- 数据记录表格 -->
+        <DataGrid x:Name="dataGrid"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserSortColumns="False"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Left"
+                  VerticalScrollBarVisibility="Visible"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Margin="10,115,0,0"
+                  Width="750"
+                  MaxWidth="750"
+                  MinWidth="750"
+                  RowHeight="25"
+                  Height="320">
+            <DataGrid.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Setter Property="Padding"
+                            Value="1,0" />
+                    <Setter Property="BorderThickness"
+                            Value="0" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected"
+                                 Value="True">
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected"
+                                           Value="True" />
+                                <Condition Property="IsKeyboardFocusWithin"
+                                           Value="False" />
+                            </MultiTrigger.Conditions>
+                        </MultiTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.Resources>
+                <Style x:Key="RightCell"
+                       TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment"
+                            Value="Right" />
+                    <Setter Property="VerticalAlignment"
+                            Value="Center" />
+                </Style>
+                <Style x:Key="RightHeader"
+                       TargetType="DataGridColumnHeader"
+                       BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Right" />
+                    <Setter Property="Padding"
+                            Value="0,0,4,0" />
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Time"
+                                    Binding="{Binding Time}"
+                                    Width="90"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+                <DataGridTextColumn Header="X"
+                                    Binding="{Binding X}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+                <DataGridTextColumn Header="Y"
+                                    Binding="{Binding Y}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+                <DataGridTextColumn Header="Z"
+                                    Binding="{Binding Z}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+                <DataGridTextColumn Header="Pan"
+                                    Binding="{Binding Pan}"
+                                    Width="70"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+                <DataGridTextColumn Header="Tilt"
+                                    Binding="{Binding Tilt}"
+                                    Width="70"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+                <DataGridTextColumn Header="Roll"
+                                    Binding="{Binding Roll}"
+                                    Width="70"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+                <DataGridTextColumn Header="Focus"
+                                    Binding="{Binding Focus}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+                <DataGridTextColumn Header="Zoom"
+                                    Binding="{Binding Zoom}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+
+        <!-- LiveCharts.Wpf 图表 -->
+        <lvc:CartesianChart x:Name="chart"
+                            Margin="10,467,10,0"
+                            VerticalAlignment="Top"
+                            Height="415"
+                            Hoverable="False"
+                            DisableAnimations="True"
+                            Series="{Binding ChartSeries}">
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis MinValue="0"
+                          MaxValue="300">
+                    <lvc:Axis.Separator>
+                        <lvc:Separator IsEnabled="False" />
+                    </lvc:Axis.Separator>
+                </lvc:Axis>
+            </lvc:CartesianChart.AxisX>
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis LabelFormatter="{Binding Formatter}" />
+            </lvc:CartesianChart.AxisY>
+        </lvc:CartesianChart>
+        <WrapPanel Orientation="Horizontal"
+                   VerticalAlignment="Top"
+                   Margin="0,440,8,0">
+            <RadioButton x:Name="rbX"
+                         Content="X"
+                         GroupName="Channel"
+                         IsChecked="True"
+                         Checked="RbChannel_Checked"
+                         Foreground="OrangeRed"
+                         Margin="4,2" />
+            <RadioButton x:Name="rbY"
+                         Content="Y"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="LimeGreen"
+                         Margin="4,2" />
+            <RadioButton x:Name="rbZ"
+                         Content="Z"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="DodgerBlue"
+                         Margin="4,2" />
+            <RadioButton x:Name="rbPan"
+                         Content="Pan"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="Yellow"
+                         Margin="4,2" />
+            <RadioButton x:Name="rbTilt"
+                         Content="Tilt"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="Violet"
+                         Margin="4,2" />
+            <RadioButton x:Name="rbRoll"
+                         Content="Roll"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="Cyan"
+                         Margin="4,2" />
+            <RadioButton x:Name="rbFocus"
+                         Content="Focus"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="HotPink"
+                         Margin="4,2" />
+            <RadioButton x:Name="rbZoom"
+                         Content="Zoom"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="Gold"
+                         Margin="4,2" />
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"
+                       Margin="6,2" />
+            <RadioButton x:Name="rbXYZ"
+                         Content="XYZ"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="White"
+                         FontWeight="Bold"
+                         Margin="4,2" />
+            <RadioButton x:Name="rbPTR"
+                         Content="PTR"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="White"
+                         FontWeight="Bold"
+                         Margin="4,2" />
+            <RadioButton x:Name="rbFZ"
+                         Content="FZ"
+                         GroupName="Channel"
+                         Checked="RbChannel_Checked"
+                         Foreground="White"
+                         FontWeight="Bold"
+                         Margin="4,2" />
+        </WrapPanel>
+        <Button x:Name="btnExport"
+                Content="{materialDesign:PackIcon Export, Size=15}"
+                HorizontalAlignment="Left"
+                Foreground="Black"
+                Margin="655,87,0,0"
+                VerticalAlignment="Top"
+                ToolTip="Export"
+                Height="23"
+                Width="50"
+                Click="btnSettings_Click" />
+        <Button x:Name="btnClear"
+                Content="{materialDesign:PackIcon CardRemoveOutline, Size=15}"
+                HorizontalAlignment="Left"
+                Foreground="Black"
+                Margin="710,87,0,0"
+                ToolTip="Clear Data"
+                VerticalAlignment="Top"
+                Height="23"
+                Width="50"
+                Click="btnClear_Click" />
+
+        <Button x:Name="btnAddTarget"
+                Content="{materialDesign:PackIcon Plus, Size=15}"
+                HorizontalAlignment="Left"
+                Foreground="Black"
+                Margin="980,87,0,0"
+                VerticalAlignment="Top"
+                ToolTip="Add Target"
+                Height="23"
+                Width="50"
+                IsEnabled="{Binding IsNotListening}"
+                Click="btnAddTarget_Click" />
+        <Button x:Name="btnRemoveTarget"
+                Content="{materialDesign:PackIcon Minus, Size=15}"
+                HorizontalAlignment="Left"
+                Foreground="Black"
+                Margin="1035,87,0,0"
+                VerticalAlignment="Top"
+                ToolTip="Remove Target"
+                Height="23"
+                Width="50"
+                IsEnabled="{Binding IsNotListening}"
+                Click="btnRemoveTarget_Click" />
+        <DataGrid x:Name="forwardGrid"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="{Binding IsForwardGridReadOnly}"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserSortColumns="False"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Left"
+                  VerticalScrollBarVisibility="Visible"
+                  HorizontalScrollBarVisibility="Disabled"
+                  ItemsSource="{Binding ForwardTargets}"
+                  Margin="765,115,0,0"
+                  Width="320"
+                  MaxWidth="320"
+                  MinWidth="320"
+                  RowHeight="25"
+                  Height="320">
+            <DataGrid.Resources>
+                <Style x:Key="RightCell"
+                       TargetType="{x:Type TextBlock}">
+                    <Setter Property="HorizontalAlignment"
+                            Value="Right" />
+                </Style>
+                <Style x:Key="RightHeader"
+                       TargetType="{x:Type DataGridColumnHeader}"
+                       BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Right" />
+                    <Setter Property="VerticalAlignment"
+                            Value="Center" />
+                    <Setter Property="Padding"
+                            Value="0,0,4,0" />
+                </Style>
+                <Style x:Key="LeftHeader"
+                       TargetType="{x:Type DataGridColumnHeader}"
+                       BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Left" />
+                    <Setter Property="Padding"
+                            Value="0,0,4,0" />
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Setter Property="Padding"
+                            Value="1,0" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                <Border Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                    <ContentPresenter VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="IP Address"
+                                    Binding="{Binding IP, UpdateSourceTrigger=LostFocus}"
+                                    Width="140"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource LeftHeader}" />
+                <DataGridTextColumn Header="Port"
+                                    Binding="{Binding Port, UpdateSourceTrigger=LostFocus}"
+                                    Width="80"
+                                    ElementStyle="{StaticResource RightCell}"
+                                    HeaderStyle="{StaticResource RightHeader}" />
+                <DataGridTemplateColumn Header="Ping"
+                                        Width="*"
+                                        HeaderStyle="{StaticResource RightHeader}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding PingDisplay}"
+                                       Foreground="{Binding PingColor}"
+                                       HorizontalAlignment="Right"
+                                       Padding="0,0,4,0"
+                                       VerticalAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
