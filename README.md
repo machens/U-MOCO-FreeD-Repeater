@@ -41,4 +41,3 @@ A camera tracking device (such as a U-MOCO motion control head) sends FreeD UDP 
 ## Related Links
 
 - 🌐 Website: [www.u-moco.com](https://www.u-moco.com)
-- 💻 GitHub: [machens/U-MOCO-FreeD-Repeater](https://github.com/machens/U-MOCO-FreeD-Repeater)
