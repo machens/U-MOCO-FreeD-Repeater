@@ -7,12 +7,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.0.0.0508</AssemblyVersion>
-    <FileVersion>1.0.0.0508</FileVersion>
+    <AssemblyVersion>1.0.0.0513</AssemblyVersion>
+    <FileVersion>1.0.0.0513</FileVersion>
+    <ApplicationIcon>U-MOCO.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="U-MOCOhw.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="U-MOCO.ico" />
   </ItemGroup>
 
   <ItemGroup>

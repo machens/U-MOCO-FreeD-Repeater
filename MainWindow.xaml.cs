@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -51,7 +52,7 @@ namespace U_MOCO_FreeD_Repeater
             set { _ip = value; OnPropertyChanged(); }
         }
 
-        private string _port = "6301";
+        private string _port = "";
         public string Port
         {
             get => _port;
@@ -109,12 +110,12 @@ namespace U_MOCO_FreeD_Repeater
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
 
         private const int MaxTableRecords = 2000;
-        private const int ChartPoints = 300;
+        private const int ChartPoints = 500;
         private record ActiveChannel(LineSeries Series, ChartValues<double> Values, Func<FreeDMsg.FreeDData, double> Get);
         private List<ActiveChannel> _activeChannels = new();
 
         public Func<double, string> Formatter { get; set; } = value => value.ToString("F2");
-
+        private AppConfig _appConfig = new();
         private UdpClient? _udpClient;
         private CancellationTokenSource? _cts;
         private int _packetCount = 0;
@@ -151,7 +152,7 @@ namespace U_MOCO_FreeD_Repeater
             new("Roll",  Brushes.Cyan,       d => d.Roll),
             new("Focus", Brushes.HotPink,    d => d.Focus),
             new("Zoom",  Brushes.Gold,       d => d.Zoom),
-        ];  
+        ];
 
         // ComboBox 数据源
         public string[] ChannelNames => _channelDefs.Select(c => c.Name).ToArray();
@@ -180,7 +181,7 @@ namespace U_MOCO_FreeD_Repeater
             _activeChannels.Clear();
 
             // 默认选中 X（index 0）
-            AddActiveChannel(0);
+            AddActiveChannel(1);
 
             _chartTimer = new System.Windows.Threading.DispatcherTimer
             {
@@ -198,7 +199,7 @@ namespace U_MOCO_FreeD_Repeater
                 Title = ch.Name,
                 Values = vals,
                 Stroke = ch.Stroke,
-                Fill = null,
+                Fill = System.Windows.Media.Brushes.Transparent,
                 PointGeometrySize = 0,
                 StrokeThickness = 1.5,
             };
@@ -295,7 +296,7 @@ namespace U_MOCO_FreeD_Repeater
         {
             if (!int.TryParse(txtPort.Text, out int port) || port < 1 || port > 65535)
             {
-                MessageBox.Show("请输入有效的端口号（1-65535）", "错误",
+                MessageBox.Show("Please enter a vaild Port Number（1-65535）", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
@@ -306,7 +307,7 @@ namespace U_MOCO_FreeD_Repeater
             try { _udpClient = new UdpClient(port); }
             catch (Exception ex)
             {
-                MessageBox.Show($"无法绑定端口 {port}：{ex.Message}", "错误",
+                MessageBox.Show($"Can not open port {port}：{ex.Message}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
@@ -372,6 +373,7 @@ namespace U_MOCO_FreeD_Repeater
 
         private void StopListening()
         {
+            _isListening = false;
             _pingTimer?.Dispose();
             _pingTimer = null;
 
@@ -438,7 +440,12 @@ namespace U_MOCO_FreeD_Repeater
             {
                 if (string.IsNullOrWhiteSpace(t.IP)) continue;
                 long? ms = DoPing(t.IP.Trim());
-                Dispatcher.InvokeAsync(() => t.UpdatePing(ms));
+                Dispatcher.InvokeAsync(() =>
+                {
+                    // 如果已经停止监听，不再更新 Ping 显示
+                    if (!_isListening) return;
+                    t.UpdatePing(ms);
+                });
             }
         }
 
@@ -454,7 +461,9 @@ namespace U_MOCO_FreeD_Repeater
         }
         private void btnAddTarget_Click(object sender, RoutedEventArgs e)
         {
-            ForwardTargets.Add(new ForwardTarget { IP = "", Port = "" });
+            var ft = new ForwardTarget { IP = "", Port = "" };
+            ft.PropertyChanged += (_, _) => SaveConfig();
+            ForwardTargets.Add(ft);
             RefreshTargetSnapshot();
         }
 
@@ -473,16 +482,93 @@ namespace U_MOCO_FreeD_Repeater
         {
 
         }
+        private void SaveConfig()
+        {
+            _appConfig.ReceivePort = int.TryParse(txtPort.Text, out int p) ? p : _appConfig.ReceivePort;
+            _appConfig.ForwardTargets = ForwardTargets
+                .Select(t => new ForwardTargetConfig { IP = t.IP, Port = t.Port })
+                .ToList();
+            ConfigManager.Save(_appConfig);
+        }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e) {
+        private void LogoImage_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "https://www.u-moco.com",
+                UseShellExecute = true
+            });
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var version = System.Reflection.Assembly.GetExecutingAssembly()
+    .GetName().Version;
+            string ver = version is not null
+                ? $"v{version.Major}.{version.Minor}.{version.Build}.{version.Revision}"
+                : "";
+            this.Title = $"U-MOCO FreeD Repeater {ver}    www.u-moco.com";
             InitChart();
+
+            // 加载配置
+            _appConfig = ConfigManager.Load();
+            txtPort.Text = _appConfig.ReceivePort.ToString();
+
+            foreach (var t in _appConfig.ForwardTargets)
+            {
+                var ft = new ForwardTarget { IP = t.IP, Port = t.Port };
+                ft.PropertyChanged += (_, _) => SaveConfig(); // 属性变更自动保存
+                ForwardTargets.Add(ft);
+            }
+            RefreshTargetSnapshot();
+
+            // 监听集合变更（增删行）
+            ForwardTargets.CollectionChanged += (_, _) => SaveConfig();
+
+            // 监听端口变更
+            txtPort.TextChanged += (_, _) => SaveConfig();
+
             txtPort.Focus();
             txtPort.SelectAll();
         }
 
         private void btnExport_Click(object sender, RoutedEventArgs e)
         {
-            // 导出逻辑保持不变
+            if (Records.Count == 0)
+            {
+                MessageBox.Show("No data exists.", "Info",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Title = "Export CSV",
+                Filter = "CSV Files (*.csv)|*.csv",
+                FileName = $"FreeD_{DateTime.Now:yyyyMMdd_HHmmss}.csv"
+            };
+
+            if (dialog.ShowDialog() != true) return;
+
+            try
+            {
+                var sb = new StringBuilder();
+                // 写入表头
+                sb.AppendLine("Time,X,Y,Z,Pan,Tilt,Roll,Focus,Zoom");
+
+                // 写入数据行（Records 是倒序插入的，导出时正序）
+                foreach (var r in Records.Reverse())
+                {
+                    sb.AppendLine($"{r.Time},{r.X},{r.Y},{r.Z},{r.Pan},{r.Tilt},{r.Roll},{r.Focus},{r.Zoom}");
+                }
+
+                File.WriteAllText(dialog.FileName, sb.ToString(), Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Export failed：{ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
