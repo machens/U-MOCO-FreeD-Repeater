@@ -22,7 +22,7 @@ It receives **FreeD protocol** UDP packets — an industry-standard protocol use
 
 ### 🔁 Forwarding
 
-	- **Multi-target UDP Forwarding** — Forwards raw FreeD packets to multiple IP/port destinations in real time, enabling data distribution to several rendering engines or applications simultaneously.
+- **Multi-target UDP Forwarding** — Forwards raw FreeD packets to multiple IP/port destinations in real time, enabling data distribution to several rendering engines or applications simultaneously.
 
 ### 💾 Data & Configuration
 
