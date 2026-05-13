@@ -10,19 +10,19 @@ It receives **FreeD protocol** UDP packets — an industry-standard protocol use
 
 ### 📡 Reception
 
-- **UDP Listener** — Binds to a configurable local port to receive FreeD protocol packets from any compatible camera tracking system (e.g., U-MOCO).
+- **UDP Listener** — Binds to a configurable local port to receive FreeD protocol packets from any compatible camera tracking system (e.g., U-MOCO, RedSpy, Mo-Sys).
 - **Packet Rate Monitor** — Continuously displays the incoming data frequency in Hz to verify signal integrity.
-- **Timestamped Data Log** — Maintains a scrollable live table of up to 2,000 recent records, capturing all tracking parameters with millisecond-level timestamps.
+- **Timestamped Data Log** — Maintains a scrollable live table of recent records, capturing all tracking parameters with millisecond-level timestamps.
+
+### 🔁 Forwarding
+
+- **Multi-target UDP Forwarding** — Forwards raw FreeD packets to multiple IP/port destinations in real time, enabling data distribution to several rendering engines or applications simultaneously.
 
 ### 📊 Monitoring & Visualization
 
 - **Real-time Chart** — Plots live waveforms for all 8 tracking channels: **X, Y, Z** (position), **Pan, Tilt, Roll** (orientation), **Focus**, and **Zoom**.
 - **Channel Selection** — Quickly switch between grouped views (XYZ / Pan-Tilt-Roll / Focus-Zoom) or inspect any individual channel.
 - **Ping Monitor** — Continuously pings each configured forward target and displays network latency with color-coded indicators (🟢 ≤3 ms / 🟡 ≤15 ms / 🔴 >15 ms).
-
-### 🔁 Forwarding
-
-- **Multi-target UDP Forwarding** — Forwards raw FreeD packets to multiple IP/port destinations in real time, enabling data distribution to several rendering engines or applications simultaneously.
 
 ### 💾 Data & Configuration
 
@@ -36,7 +36,6 @@ A camera tracking device (such as a U-MOCO motion control head) sends FreeD UDP 
 ## Requirements
 
 - Windows 10 / 11
-- [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
 
 ## Related Links
 
