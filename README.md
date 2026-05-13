@@ -1,6 +1,6 @@
 # U-MOCO FreeD Repeater
 
-**U-MOCO FreeD Repeater** is a Windows desktop application (WPF, .NET 10) built for camera tracking workflows in broadcast, film, and virtual production environments.
+**U-MOCO FreeD Repeater** is a Windows desktop application built for camera tracking workflows in broadcast, film, and virtual production environments.
 
 ## Overview
 
