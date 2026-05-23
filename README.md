@@ -4,7 +4,7 @@
 
 ## Overview
 
-It receives **FreeD protocol** UDP packets — an industry-standard protocol used by camera tracking systems to transmit real-time camera position and orientation data — and provides **real-time monitoring, visualization, and forwarding** of that data to one or more downstream targets simultaneously.
+It receives **FreeD tracking protocol** UDP packets — an industry-standard protocol used by camera tracking systems to transmit real-time camera position and orientation data — and provides **real-time monitoring, visualization, and forwarding** of that data to one or more downstream targets simultaneously.
 
 ## Key Features
 
